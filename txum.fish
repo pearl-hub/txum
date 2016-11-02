@@ -5,7 +5,7 @@
 if [ -n "$TMUX" ]
     # set TERM according to the parent terminal's TERM (see etc/tmux.conf)
     switch $TERM
-        case *-256color
+        case '*-256color'
             set -x TERM xterm-256color
         case '*'
             set -x TERM screen
@@ -14,6 +14,7 @@ if [ -n "$TMUX" ]
     set PEARL_SESSION_NAME (tmux display-message -p '#S')
     set PEARL_WINDOW_INDEX (tmux display-message -p '#I')
     set PEARL_PANE_INDEX (tmux display-message -p '#P')
+    mkdir -p $PEARL_HOME/envs
     [ -f $PEARL_HOME/envs/default ]; and source $PEARL_HOME/envs/default
     [ -f $PEARL_HOME/envs/$PEARL_SESSION_NAME ]; and source $PEARL_HOME/envs/$PEARL_SESSION_NAME
 end
