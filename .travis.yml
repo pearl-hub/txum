@@ -1,0 +1,16 @@
+# vim: ft=yaml
+os:
+  - linux
+  - osx
+
+language: bash
+
+sudo: required
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./tests/integ-tests/install-linux-deps.sh; fi;
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./tests/integ-tests/install-osx-deps.sh; fi;
+
+script:
+  - ./tests/checkstyle/checkstyle.sh
+  - ./tests/unit-tests/unit-tests.sh
