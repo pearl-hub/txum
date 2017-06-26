@@ -2,17 +2,20 @@
 
 set -e
 
-[ -z "$PEARL_ROOT" ] && { echo "Error: The variable PEARL_ROOT must be specified in order to run this script."; exit 1; }
-[ -d "$PEARL_ROOT" ] || { echo "Error: The value in variable PEARL_ROOT is not a directory."; exit 2; }
+# PATH needs to be updated since GNU Coreutils is required in OSX
+# environments. Buava `osx_update_path` cannot be used because in
+# order to load osx-compat.sh file the `readlink` command is
+# required first (circular dependency).
+GNUBIN="/usr/local/opt/coreutils/libexec/gnubin"
+[ -d "$GNUBIN" ] && PATH="$GNUBIN:$PATH"
 
-source $PEARL_ROOT/lib/utils/osx-compat.sh
-# Update PATH for OSX
-pearl_update_path
-source "${PEARL_ROOT}/lib/utils/utils.sh"
+# Identify the location of the current package
+PKG_ROOT="${PKG_ROOT:-$(readlink -f $(dirname $(readlink -f "$0"))/..)}"
 
-CMD_ROOT="${CMD_ROOT:-$(readlink -f $(dirname $(readlink -f "$0"))/..)}"
+# Import buava library if needed during the script logic
+source $PKG_ROOT/buava/lib/utils.sh
 
-source "${CMD_ROOT}/lib/core.sh"
+source "${PKG_ROOT}/lib/core.sh"
 
 CMD=txum
 DESCRIPTION="A wrapper that enhances Tmux capabilities."
@@ -23,7 +26,6 @@ DESCRIPTION="A wrapper that enhances Tmux capabilities."
 # Globals:
 #   CMD (RO)          :  The name of the program.
 #   DESCRIPTION (RO)  :  The description of the program.
-#   CMD_ROOT (RO)     :  The location of the program.
 # Arguments:
 #   None
 # Returns:

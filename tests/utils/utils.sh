@@ -33,7 +33,6 @@ function pearlHomeTearDown(){
 # library dependencies such as $PEARL_ROOT/lib/utils/utils.sh
 function pearlRootSetUp() {
     export PEARL_ROOT=$(TMPDIR=/tmp mktemp -d -t pearl-test-root.XXXXXXX)
-    git clone --quiet https://github.com/pearl-core/pearl.git $PEARL_ROOT
 }
 
 function pearlRootTearDown(){
