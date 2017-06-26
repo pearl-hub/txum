@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-PKG_LOCATION=$(dirname $0)/../..
-source "$PKG_LOCATION/tests/utils/utils.sh"
+PKG_LOCATION="$(dirname $0)/../.."
+source "$PKG_LOCATION/tests/bunit/utils/utils.sh"
+source "$PKG_LOCATION/tests/test-utils/utils.sh"
 
 pearlSetUp
 source $PKG_LOCATION/buava/lib/utils.sh
@@ -101,4 +102,4 @@ function test_go_command_existing_session_in_tmux(){
     assertEquals "$(echo -e "tmux has-session -t myalias\ntmux switch-client -t myalias")" "$(cat $STDOUTF)"
 }
 
-source $(dirname $0)/../utils/shunit2
+source $PKG_LOCATION/tests/bunit/utils/shunit2

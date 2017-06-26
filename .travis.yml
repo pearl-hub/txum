@@ -12,5 +12,5 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./tests/integ-tests/install-osx-deps.sh; fi;
 
 script:
-  - ./tests/checkstyle/checkstyle.sh
-  - ./tests/unit-tests/unit-tests.sh
+  - ./tests/bunit/bin/checkstyle.sh ./bin/ ./lib/
+  - ./tests/bunit/bin/unit-tests.sh ./tests/unit-tests
