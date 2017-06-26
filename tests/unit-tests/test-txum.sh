@@ -2,8 +2,8 @@
 source "$(dirname $0)/../utils/utils.sh"
 
 pearlSetUp
-CMD_ROOT=$(dirname $0)/../../
-source $CMD_ROOT/bin/txum -h &> /dev/null
+PKG_ROOT=$(dirname $0)/../../
+source $PKG_ROOT/bin/txum -h &> /dev/null
 
 # Disable the exiterr
 set +e
@@ -47,20 +47,6 @@ function test_help(){
     assertCommandSuccess cli_wrap h
     cat $STDOUTF | grep -q "txum"
     assertEquals 0 $?
-}
-
-function test_txum_no_pearl_root_defined(){
-    OLD_PEARL_ROOT=$PEARL_ROOT
-    unset PEARL_ROOT
-    assertCommandFailOnStatus 1 source $CMD_ROOT/bin/txum -h
-    PEARL_ROOT=$OLD_PEARL_ROOT
-}
-
-function test_txum_no_pearl_root_directory(){
-    OLD_PEARL_ROOT=$PEARL_ROOT
-    PEARL_ROOT="not-a-directory"
-    assertCommandFailOnStatus 2 source $CMD_ROOT/bin/txum -h
-    PEARL_ROOT=$OLD_PEARL_ROOT
 }
 
 function test_txum_go(){

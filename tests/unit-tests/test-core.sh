@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-source "$(dirname $0)/../utils/utils.sh"
+PKG_LOCATION=$(dirname $0)/../..
+source "$PKG_LOCATION/tests/utils/utils.sh"
 
 pearlSetUp
-source $PEARL_ROOT/lib/utils/utils.sh
-source "$(dirname $0)/../../lib/core.sh"
+source $PKG_LOCATION/buava/lib/utils.sh
+source "$PKG_LOCATION/lib/core.sh"
 
 # Disable the exiterr
 set +e
