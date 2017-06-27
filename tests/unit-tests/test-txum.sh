@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-source "$(dirname $0)/../utils/utils.sh"
+PKG_ROOT="$(dirname $0)/../.."
+source "$PKG_ROOT/tests/bunit/utils/utils.sh"
+source "$PKG_ROOT/tests/test-utils/utils.sh"
 
 pearlSetUp
-PKG_ROOT=$(dirname $0)/../../
 source $PKG_ROOT/bin/txum -h &> /dev/null
 
 # Disable the exiterr
@@ -64,4 +65,4 @@ function test_check_cli(){
     assertCommandFail cli_wrap k myalias
 }
 
-source $(dirname $0)/../utils/shunit2
+source $PKG_ROOT/tests/bunit/utils/shunit2
