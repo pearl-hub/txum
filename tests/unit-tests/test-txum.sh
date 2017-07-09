@@ -42,27 +42,18 @@ function test_help(){
     assertCommandSuccess cli_wrap --help
     cat $STDOUTF | grep -q "txum"
     assertEquals 0 $?
-    assertCommandSuccess cli_wrap help
-    cat $STDOUTF | grep -q "txum"
-    assertEquals 0 $?
-    assertCommandSuccess cli_wrap h
-    cat $STDOUTF | grep -q "txum"
-    assertEquals 0 $?
 }
 
 function test_txum_go(){
-    assertCommandSuccess cli_wrap go myalias
-    assertEquals "$(echo -e "go_command myalias")" "$(cat $STDOUTF)"
-
-    assertCommandSuccess cli_wrap g myalias
+    assertCommandSuccess cli_wrap myalias
     assertEquals "$(echo -e "go_command myalias")" "$(cat $STDOUTF)"
 }
 
 function test_check_cli(){
     assertCommandFail cli_wrap
-    assertCommandFail cli_wrap -h g myalias
-    assertCommandFail cli_wrap g myalias wrong_arg
-    assertCommandFail cli_wrap k myalias
+    assertCommandFail cli_wrap -h myalias
+    assertCommandFail cli_wrap myalias wrong_arg
+    assertCommandFail cli_wrap -n myalias
 }
 
 source $PKG_ROOT/tests/bunit/utils/shunit2

@@ -18,7 +18,7 @@ source $PKG_ROOT/buava/lib/utils.sh
 source "${PKG_ROOT}/lib/core.sh"
 
 CMD=txum
-DESCRIPTION="A wrapper that enhances Tmux capabilities."
+DESCRIPTION="A wrapper that enhances Tmux capabilities. Create/Open a Tmux session and cd to the directory specified by alias."
 
 #######################################
 # Provide the usage information.
@@ -35,12 +35,10 @@ DESCRIPTION="A wrapper that enhances Tmux capabilities."
 #######################################
 usage() {
     echo -e "$CMD: $DESCRIPTION"
-    echo -e "Usage: $CMD <command> [args]"
+    echo -e "Usage: $CMD alias"
     echo
-    echo -e "Commands:"
-    echo -e "  g[o] alias               Create/Open a Tmux session"
-    echo -e "                           and cd to the directory specified by alias."
-    echo -e "  h[elp], [-h], [--help]   Show this help message."
+    echo -e "Options:"
+    echo -e "  -h, --help   Show this help message."
     echo
     return 0
 }
@@ -49,10 +47,8 @@ usage() {
 # Parse the command input.
 #
 # Globals:
-#   COMMAND_GO (WO,bool)     :  true if the command has been specified.
 #   OPT_HELP (WO,bool)        :  true if the command has been specified.
 #   ARGS (WO)                 :  the non positional arguments.
-#   COMMAND_ARGS (WO)         :  the command arguments.
 # Arguments:
 #   opts ($@)                 :  the program arguments.
 # Returns:
@@ -62,16 +58,12 @@ usage() {
 #   The error message in case parsing will not succeed.
 #######################################
 function parse_arguments(){
-    COMMAND_GO=false
     OPT_HELP=false
-    COMMAND_ARGS=""
 
     for opt in "$@"
     do
     case "$opt" in
-        go|g)
-        COMMAND_GO=true; shift ; COMMAND_ARGS="$1" ; shift ;;
-        help|h|-h|--help) OPT_HELP=true ; shift ;;
+        -h|--help) OPT_HELP=true ; shift ;;
         --) shift ; break ;;
         -*) die "Invalid option $1" ;;
         *) break ;;
@@ -90,10 +82,8 @@ function parse_arguments(){
 # are correct.
 #
 # Globals:
-#   COMMAND_GO (RO,bool)     :  true if the command has been specified.
 #   OPT_HELP (RO,bool)        :  true if the command has been specified.
 #   ARGS (RO)                 :  the non positional arguments.
-#   COMMAND_ARGS (RO)         :  the command arguments.
 # Arguments:
 #   None
 # Returns:
@@ -103,17 +93,13 @@ function parse_arguments(){
 #   The error message in case checks will not succeed.
 #######################################
 check_cli(){
-    if $COMMAND_GO && $OPT_HELP
+    if [ "$ARGS" != "" ] && $OPT_HELP
     then
-        die "Multiple commands are not allowed. Run: $CMD --help"
+        die "No arguments are needed with --help option. Run: $CMD --help"
     fi
-    if ! $COMMAND_GO && ! $OPT_HELP
+    if [[ ${#ARGS[@]} -ne 1 ]] && ! $OPT_HELP
     then
-        die "At least one command is required. Run: $CMD --help"
-    fi
-    if [ "$ARGS" != "" ]
-    then
-        die "No arguments are needed. Run: $CMD --help"
+        die "Only one alias is allowed. Run: $CMD --help"
     fi
     return 0
 }
@@ -122,10 +108,8 @@ check_cli(){
 # Execute the specified command.
 #
 # Globals:
-#   COMMAND_GO (RO,bool)     :  true if the command has been specified.
 #   OPT_HELP (RO,bool)        :  true if the command has been specified.
 #   ARGS (RO)                 :  the non positional arguments.
-#   COMMAND_ARGS (RO)         :  the command arguments.
 # Arguments:
 #   None
 # Returns:
@@ -136,9 +120,7 @@ check_cli(){
 function execute_operation(){
     $OPT_HELP && usage && return
 
-    if $COMMAND_GO; then
-        go_command "${COMMAND_ARGS}"
-    fi
+    go_command "${ARGS[@]}"
     return 0
 }
 

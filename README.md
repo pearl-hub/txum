@@ -33,13 +33,13 @@ and the corresponding directory separated by `:`. For instance:
 - To create a Tmux session in the directory specified by `myalias`:
 
 ```sh
-$ txum go myalias
+$ txum myalias
 ```
 
 In case the Tmux session already exists, the previous command
 will move to the existing session instead.
 Moreover, `txum` will also work in case it gets executed
-inside a Tmux session.
+inside an existing Tmux session.
 
 Installation
 ============
