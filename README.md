@@ -23,23 +23,40 @@ Description
 Quickstart
 ==========
 
-`txum` command relies heavily in the `$PEARL_HOME/bookmarks` file
-for identifying the user favourite directories.
+Add a new alias with `txum`:
+
+```sh
+$ txum add myproject /path/to/your/project
+```
+
+List all available aliases:
+
+```sh
+$ txum list
+myproject:/path/to/your/project
+```
+
+The following will create a `tmux` session with `/path/to/your/project` as
+current working directory. If the session already exists the following will just
+attach to that session:
+
+```sh
+$ txum go myproject
+```
+
+Remove the previous alias:
+
+```sh
+$ txum remove myproject
+```
+
+The bookmarks are stored in `$PEARL_HOME/bookmarks` file.
 The content of such file contains each line with the alias
 and the corresponding directory separated by `:`. For instance:
 
     myalias:/home/myuser/myproject
 
-- To create a Tmux session in the directory specified by `myalias`:
-
-```sh
-$ txum myalias
-```
-
-In case the Tmux session already exists, the previous command
-will move to the existing session instead.
-Moreover, `txum` will also work in case it gets executed
-inside an existing Tmux session.
+`txum` can be also executed inside any other existing `tmux` session.
 
 Installation
 ============
@@ -55,6 +72,7 @@ The main dependencies are the following:
 
 - [Pearl](https://github.com/pearl-core/pearl)
 - [GNU coreutils](https://www.gnu.org/software/coreutils/)
+- [grep](https://www.gnu.org/software/grep/)
 
 Troubleshooting
 ===============

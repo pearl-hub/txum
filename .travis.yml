@@ -7,10 +7,20 @@ language: bash
 
 sudo: required
 
+env:
+  - TRAVIS_FISH_VERSION="2.2.0"
+
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./tests/integ-tests/install-linux-deps.sh; fi;
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./tests/integ-tests/install-osx-deps.sh; fi;
 
+install:
+  - curl -sL https://git.io/vV4yE | sh
+  - echo "PEARL_PACKAGES[test]=\"${PWD}\"" >> ~/.config/pearl/pearl.conf
+
 script:
   - ./tests/bunit/bin/checkstyle.sh ./bin/ ./lib/
   - ./tests/bunit/bin/unit-tests.sh ./tests/unit-tests
+  - ./tests/integ-tests/integ-tests.sh
+  - ./tests/integ-tests/integ-tests.zsh
+  - fish ./tests/integ-tests/integ-tests.fish
