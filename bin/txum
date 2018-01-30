@@ -20,6 +20,7 @@ source "${PKG_ROOT}/lib/core.sh"
 CMD=txum
 DESCRIPTION="A wrapper that enhances Tmux capabilities. Create/Open a Tmux session and cd to the directory specified by alias."
 
+
 #######################################
 # Provide the usage information.
 #
@@ -35,20 +36,32 @@ DESCRIPTION="A wrapper that enhances Tmux capabilities. Create/Open a Tmux sessi
 #######################################
 usage() {
     echo -e "$CMD: $DESCRIPTION"
-    echo -e "Usage: $CMD alias"
+    echo -e "Usage: $CMD <command> [args]"
     echo
-    echo -e "Options:"
-    echo -e "  -h, --help   Show this help message."
+    echo -e "Commands:"
+    echo -e "  a[dd]    alias [path]      Add a new alias for the specified path in bookmarks."
+    echo -e "                             path can be either a relative or absolute path."
+    echo -e "  r[emove] alias             Remove the specified alias."
+    echo -e "  g[o]     alias             Open the TMUX session to the specified alias."
+    echo -e "  l[ist]                     List all the available aliases and paths."
+    echo -e "  h[elp], [-h], [--help]     Show this help message."
     echo
     return 0
 }
+
 
 #######################################
 # Parse the command input.
 #
 # Globals:
 #   OPT_HELP (WO,bool)        :  true if the command has been specified.
+#   COMMAND_ADD (WO,bool)     :  true if the command has been specified.
+#   COMMAND_REMOVE (WO,bool)  :  true if the command has been specified.
+#   COMMAND_GO (WO,bool)      :  true if the command has been specified.
+#   COMMAND_LIST (WO,bool)    :  true if the command has been specified.
+#   OPT_HELP (WO,bool)        :  true if the command has been specified.
 #   ARGS (WO)                 :  the non positional arguments.
+#   COMMAND_ARGS (WO)         :  the command arguments.
 # Arguments:
 #   opts ($@)                 :  the program arguments.
 # Returns:
@@ -58,12 +71,27 @@ usage() {
 #   The error message in case parsing will not succeed.
 #######################################
 function parse_arguments(){
+    COMMAND_ADD=false
+    COMMAND_REMOVE=false
+    COMMAND_GO=false
+    COMMAND_LIST=false
+    COMMAND_ARGS=()
     OPT_HELP=false
 
     for opt in "$@"
     do
     case "$opt" in
-        -h|--help) OPT_HELP=true ; shift ;;
+        add|a)
+        COMMAND_ADD=true; shift ; COMMAND_ARGS=("$@") ; shift ${#} ;;
+        remove|r)
+        COMMAND_REMOVE=true; shift ; COMMAND_ARGS=("$@") ; shift ${#} ;;
+        go|g)
+        COMMAND_GO=true; shift ; COMMAND_ARGS=("$@") ; shift ${#} ;;
+        list|l)
+        COMMAND_LIST=true; shift ; COMMAND_ARGS=("$@") ; shift ${#} ;;
+
+        help|h|-h|--help) OPT_HELP=true ; shift ;;
+
         --) shift ; break ;;
         -*) die "Invalid option $1" ;;
         *) break ;;
@@ -77,13 +105,19 @@ function parse_arguments(){
     done
 }
 
+
 #######################################
 # Check if the option provided to the command
 # are correct.
 #
 # Globals:
+#   COMMAND_ADD (RO,bool)     :  true if the command has been specified.
+#   COMMAND_REMOVE (RO,bool)  :  true if the command has been specified.
+#   COMMAND_GO (RO,bool)      :  true if the command has been specified.
+#   COMMAND_LIST (RO,bool)    :  true if the command has been specified.
 #   OPT_HELP (RO,bool)        :  true if the command has been specified.
 #   ARGS (RO)                 :  the non positional arguments.
+#   COMMAND_ARGS (RO)         :  the command arguments.
 # Arguments:
 #   None
 # Returns:
@@ -93,23 +127,55 @@ function parse_arguments(){
 #   The error message in case checks will not succeed.
 #######################################
 check_cli(){
-    if [ "$ARGS" != "" ] && $OPT_HELP
+    $COMMAND_ADD || $COMMAND_REMOVE || $COMMAND_GO || \
+    $COMMAND_LIST || \
+    $OPT_HELP || die "No command has been specified. Run: $CMD --help"
+    if $OPT_HELP
     then
-        die "No arguments are needed with --help option. Run: $CMD --help"
+        if $COMMAND_ADD || $COMMAND_REMOVE || \
+            $COMMAND_GO || \
+            $COMMAND_LIST
+        then
+            die "The help option must be used exclusively"
+        fi
     fi
-    if [[ ${#ARGS[@]} -ne 1 ]] && ! $OPT_HELP
+
+    if [ "$ARGS" != "" ]
     then
-        die "Only one alias is allowed. Run: $CMD --help"
+        die "No arguments are needed. Run: $CMD --help"
     fi
+
+    # All commands are supposed to get at most one argument
+    if $COMMAND_LIST || $OPT_HELP
+    then
+        if [[ ${#COMMAND_ARGS[@]} -ne 0 ]]
+        then
+            die "Too many arguments for the given command. Run: $CMD --help"
+        fi
+    fi
+    if $COMMAND_REMOVE || $COMMAND_GO
+    then
+        if [[ ${#COMMAND_ARGS[@]} -ne 1 ]]
+        then
+            die "Only one alias is accepted. Run: $CMD --help"
+        fi
+    fi
+
     return 0
 }
+
 
 #######################################
 # Execute the specified command.
 #
 # Globals:
+#   COMMAND_ADD (RO,bool)     :  true if the command has been specified.
+#   COMMAND_REMOVE (RO,bool)  :  true if the command has been specified.
+#   COMMAND_GO (RO,bool) :  true if the command has been specified.
+#   COMMAND_LIST (RO,bool)    :  true if the command has been specified.
 #   OPT_HELP (RO,bool)        :  true if the command has been specified.
 #   ARGS (RO)                 :  the non positional arguments.
+#   COMMAND_ARGS (RO)         :  the command arguments.
 # Arguments:
 #   None
 # Returns:
@@ -120,7 +186,16 @@ check_cli(){
 function execute_operation(){
     $OPT_HELP && usage && return
 
-    go_command "${ARGS[@]}"
+    if $COMMAND_ADD; then
+        add_command "${COMMAND_ARGS[@]}"
+    elif $COMMAND_REMOVE; then
+        remove_command "${COMMAND_ARGS[0]}"
+    elif $COMMAND_GO; then
+        go_command "${COMMAND_ARGS[0]}"
+    elif $COMMAND_LIST; then
+        list_command
+    fi
+
     return 0
 }
 
