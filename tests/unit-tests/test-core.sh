@@ -38,11 +38,13 @@ function test_go_command_null_alias(){
 }
 
 function test_go_command_without_bookmark_file(){
+    ORIGIN_PATH='original-path'
     BOOKMARKS_FILE='not-exists'
     CWD=$PWD
     tmux_command(){
         echo "tmux $@"
         [[ $PWD == $CWD ]] || return 1
+        [[ $PATH == 'original-path' ]] || return 1
     }
     TMUX_CMD=tmux_command
     assertCommandSuccess go_command "myalias"
@@ -50,10 +52,12 @@ function test_go_command_without_bookmark_file(){
 }
 
 function test_go_command_no_alias(){
+    ORIGIN_PATH='original-path'
     CWD=$PWD
     tmux_command(){
         echo "tmux $@"
         [[ $PWD == $CWD ]] || return 1
+        [[ $PATH == 'original-path' ]] || return 1
     }
     TMUX_CMD=tmux_command
     assertCommandSuccess go_command "myalias"
@@ -61,12 +65,14 @@ function test_go_command_no_alias(){
 }
 
 function test_go_command_new_session(){
+    ORIGIN_PATH='original-path'
     mkdir mydir
     CWD=$PWD/mydir
     echo "myalias:$CWD" > $BOOKMARKS_FILE
     tmux_command(){
         echo "tmux $@"
         [[ $PWD == $CWD ]] || return 1
+        [[ $PATH == 'original-path' ]] || return 1
     }
     TMUX_CMD=tmux_command
     assertCommandSuccess go_command "myalias"
@@ -74,6 +80,7 @@ function test_go_command_new_session(){
 }
 
 function test_go_command_new_session_in_tmux(){
+    ORIGIN_PATH='original-path'
     TMUX='something'
     mkdir mydir
     CWD=$PWD/mydir
@@ -82,6 +89,7 @@ function test_go_command_new_session_in_tmux(){
         echo "tmux $@"
         [[ $PWD == $CWD ]] || return 1
         [[ $1 == "has-session" ]] && return 1
+        [[ $PATH == 'original-path' ]] || return 1
         return 0
     }
     TMUX_CMD=tmux_command
@@ -90,6 +98,7 @@ function test_go_command_new_session_in_tmux(){
 }
 
 function test_go_command_existing_session_in_tmux(){
+    ORIGIN_PATH='original-path'
     TMUX='something'
     mkdir mydir
     CWD=$PWD/mydir
@@ -98,6 +107,7 @@ function test_go_command_existing_session_in_tmux(){
         echo "tmux $@"
         [[ $PWD == $CWD ]] || return 1
         [[ $1 == "has-session" ]] && return 0
+        [[ $PATH == 'original-path' ]] || return 1
         return 0
     }
     TMUX_CMD=tmux_command

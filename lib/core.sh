@@ -7,8 +7,7 @@
 # vim: ft=sh
 
 CAT_CMD=cat
-# Use env command to avoid propagating a polluted PATH
-TMUX_CMD="env -u PATH tmux"
+TMUX_CMD=tmux
 GREP_CMD=grep
 BOOKMARKS_FILE="$PEARL_HOME/bookmarks"
 
@@ -20,6 +19,7 @@ BOOKMARKS_FILE="$PEARL_HOME/bookmarks"
 #   BOOKMARKS_FILE (RO)  : The bookmarks file.
 #   TMUX_CMD (RO)        : The tmux command.
 #   GREP_CMD (RO)        : The grep command.
+#   ORIGIN_PATH (RO)     : Original PATH.
 # Arguments:
 #   alias ($1)           : The alias session.
 # Returns:
@@ -37,6 +37,8 @@ function go_command(){
 
     builtin cd "$dir"
     # Manages the creation of internal session differently
+    # To avoid polluting the PATH, revert to the original PATH
+    PATH=$ORIGIN_PATH
     if [[ -z $TMUX ]]
     then
         $TMUX_CMD new-session -AD -s "${alias}"
