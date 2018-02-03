@@ -2,6 +2,8 @@
 
 set -e
 
+# To restore the PATH keep it to a different variable.
+ORIGIN_PATH=$PATH
 # PATH needs to be updated since GNU Coreutils is required in OSX
 # environments. Buava `osx_update_path` cannot be used because in
 # order to load osx-compat.sh file the `readlink` command is
