@@ -7,7 +7,8 @@
 # vim: ft=sh
 
 CAT_CMD=cat
-TMUX_CMD=tmux
+# Use env command to avoid propagating a polluted PATH
+TMUX_CMD="env -u PATH tmux"
 GREP_CMD=grep
 BOOKMARKS_FILE="$PEARL_HOME/bookmarks"
 
@@ -56,7 +57,6 @@ function go_command(){
 #
 # Globals:
 #   BOOKMARKS_FILE (RO)  : The bookmarks file.
-#   TMUX_CMD (RO)        : The tmux command.
 # Arguments:
 #   alias ($1)           : The alias session.
 #                          Allowed chars: lowercase alphanumeric, "-" and "_".
@@ -86,7 +86,6 @@ function add_command(){
 #
 # Globals:
 #   BOOKMARKS_FILE (RO)  : The bookmarks file.
-#   TMUX_CMD (RO)        : The tmux command.
 # Arguments:
 #   alias ($1)           : The alias session.
 #                          Allowed chars: lowercase alphanumeric, "-" and "_".
