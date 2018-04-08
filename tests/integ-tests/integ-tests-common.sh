@@ -11,6 +11,3 @@ txum list
 
 txum remove myalias
 
-pearl update test
-
-pearl remove test
