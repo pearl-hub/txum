@@ -15,10 +15,8 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./tests/test-utils/installs/install-osx-deps.sh; fi;
 
 install:
-  - pip install --user pearlcli
+  - ./tests/integ-tests/install-pearl.sh
   - export PATH="~/.local/bin:$PATH"
-  - pearl init
-  - echo "PEARL_PACKAGES['test'] = {'url': '${PWD}'}" >> ~/.config/pearl/pearl.conf
   - source ~/.bashrc
 
 script:
