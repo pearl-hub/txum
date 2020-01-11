@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+export TXUM_VARDIR=$(dirname $0)
+
 PKG_ROOT="$(dirname $0)/../.."
 source "$PKG_ROOT/tests/bunit/utils/utils.sh"
 source "$PKG_ROOT/tests/test-utils/utils.sh"

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-set -e
+set -e -o pipefail
+
+[ -z "$TXUM_VARDIR" ] && { echo "Error: The variable CMD_VARDIR must be specified in order to run this script."; exit 1; }
+[ -d "$TXUM_VARDIR" ] || { echo "Error: The value in variable CMD_VARDIR is not a directory."; exit 2; }
 
 # To restore the PATH keep it to a different variable.
 ORIGIN_PATH=$PATH

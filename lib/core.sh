@@ -9,7 +9,7 @@
 CAT_CMD=cat
 TMUX_CMD=tmux
 GREP_CMD=grep
-BOOKMARKS_FILE="$PEARL_HOME/bookmarks"
+BOOKMARKS_FILE="$TXUM_VARDIR/bookmarks"
 
 
 #######################################
