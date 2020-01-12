@@ -16,6 +16,8 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./tests/test-utils/installs/install-osx-deps.sh; fi;
 
 install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./tests/test-utils/installs/install-linux-pearl.sh; fi;
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./tests/test-utils/installs/install-osx-pearl.sh; fi;
   - export PATH="~/.local/bin:/usr/local/bin:$PATH"
 
 script:
